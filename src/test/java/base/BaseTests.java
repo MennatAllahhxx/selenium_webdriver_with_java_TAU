@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import pages.HomePage;
 
 
@@ -23,9 +24,14 @@ public class BaseTests {
         driver = new ChromeDriver(chromeOptions);
 
         driver.manage().window().maximize();
-        driver.get("https://the-internet.herokuapp.com/");
 
+        goHome();
         homePage = new HomePage(driver);
+    }
+
+    @BeforeMethod
+    public void goHome() {
+        driver.get("https://the-internet.herokuapp.com/");
     }
 
     @AfterClass
