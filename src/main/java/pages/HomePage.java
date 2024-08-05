@@ -55,4 +55,16 @@ public class HomePage {
 
         return new AlertsPage(driver);
     }
+
+    public FileUploadPage clickFileUpload() {
+        clickLink("File Upload");
+
+        return new FileUploadPage(driver);
+    }
+
+    public ContextMenuPage clickContextMenu() {
+        clickLink("Context Menu");
+
+        return new ContextMenuPage(driver);
+    }
 }
