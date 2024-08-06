@@ -2,6 +2,7 @@ package base;
 
 import com.google.common.io.Files;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -29,15 +30,24 @@ public class BaseTests {
     public void setUp() {
         WebDriverManager.chromedriver().setup();
 
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--remote-allow-origins=*");
+        driver = new EventFiringWebDriver(new ChromeDriver(getChromeOptions()));
 
-        driver = new EventFiringWebDriver(new ChromeDriver(chromeOptions));
         driver.register(new EventReporter());
-
         driver.manage().window().maximize();
 
         goHome();
+
+        setCookie();
+
+        System.out.println("Cookies before deletion: ");
+        getWebsiteCookies();
+        System.out.println("-------------------------");
+
+        deleteCookie();
+
+        System.out.println("Cookies after deletion: ");
+        getWebsiteCookies();
+        System.out.println("-------------------------");
     }
 
     @BeforeMethod
@@ -67,5 +77,32 @@ public class BaseTests {
 
     public WindowManager getWindowManager() {
         return new WindowManager(driver);
+    }
+
+    private ChromeOptions getChromeOptions() {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("disable-infobars", "--remote-allow-origins=*");
+        //chromeOptions.setHeadless(true);
+
+        return chromeOptions;
+    }
+
+    private void setCookie() {
+        Cookie cookie = new Cookie.Builder("tau", "123").
+                domain("the-internet.herokuapp.com").
+                build();
+
+        driver.manage().addCookie(cookie);
+    }
+
+    private void deleteCookie() {
+        Cookie cookie = new Cookie.Builder("optimizelyBuckets", "%7B%7D").
+                domain("the-internet.herokuapp.com").
+                build();
+        driver.manage().deleteCookie(cookie);
+    }
+
+    public void getWebsiteCookies() {
+        driver.manage().getCookies().forEach(cookie-> System.out.println(cookie.getName()));
     }
 }
