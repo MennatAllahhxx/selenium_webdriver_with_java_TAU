@@ -8,6 +8,7 @@ import org.openqa.selenium.TakesScreenshot;
 
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
@@ -20,6 +21,8 @@ import utils.WindowManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class BaseTests {
@@ -30,7 +33,11 @@ public class BaseTests {
     public void setUp() {
         WebDriverManager.chromedriver().setup();
 
-        driver = new EventFiringWebDriver(new ChromeDriver(getChromeOptions()));
+        try {
+            driver = new EventFiringWebDriver(new RemoteWebDriver(new URL("http://localhost:4444/"), getChromeOptions()));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
 
         driver.register(new EventReporter());
         driver.manage().window().maximize();
